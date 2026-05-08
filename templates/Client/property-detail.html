@@ -1,0 +1,281 @@
+{% extends "Client/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Client/property-detail.css') }}">
+{% endblock %}
+
+{% block title %}
+Property Details | {{ property.name }}
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="property-detail">
+    <div class="property-gallery">
+      <div class="gallery-box">
+        {% if property.property_images %}
+        <div class="slideshow-container">
+          {% for media in property.property_images %}
+          <div class="mySlides">
+            {% if media.image_type == "png" or media.image_type == "jpg" or media.image_type == "jpeg" %}
+            <img loading="lazy" src="https://dalali-pms.s3.eu-north-1.amazonaws.com/{{ media.image_name }}"
+              style="width:100%">
+            {% else %}
+            <video controls src="https://dalali-pms.s3.eu-north-1.amazonaws.com/{{ media.image_name }}"
+              style="width:100%"></video>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="controls">
+            <button class="prev" onclick="plusSlides(-1)">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="next" onclick="plusSlides(1)">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        {% else %}
+        <img class="no-image" src="../../static/Images/no-photo.png" style="width:100%">
+        {% endif %}
+      </div>
+      <div class="property-status {{ property.auction_status }}">
+        <span>{{ property.auction_status }}</span>
+      </div>
+    </div>
+    <div class="property-info">
+      <div class="property-header">
+        <div class="header-box">
+          <h1 class="property-detail-title">{{ property.name }}</h1>
+          <p class="property-detail-location">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ location.region }}, {{ location.district }}, {{ location.town }} near
+              {{ location.landmark }}</span>
+          </p>
+        </div>
+        <h1 class="property-detail-title">
+          {{ property.property_types.name }}
+          {% if property.property_types.name == "Bare Land" %}
+          <span id="prop-size">{{ "{:,}".format(property.property_size) }} SQM</span>
+          {% endif %}
+        </h1>
+      </div>
+
+      <div class="property-detail-price">
+        <!-- <div class="currency-converter">
+          <div class="converter-box">
+            <select id="currencySelector" class="currency-select">
+              <option value="KSH">Tanzanian Shilling (KSH)</option>
+              <option value="USD">US Dollar (USD)</option>
+            </select>
+            <div class="converter-rate" id="exchangeRate">1 USD = 2,300 KSH</div>
+          </div>
+        </div> -->
+        <div class="price-box">
+          <h4 id="mainPrice" data-Ksh="{{ property.rent }}">
+            {% if property.currency == "KSH" %}
+            {{ "Ksh {:,}".format(property.rent) }}
+            {% elif property.currency == "USD" %}
+            {{ "$ {:,}".format(property.rent) }}
+            {% else %}
+            {{ "Ksh {:,}".format(property.rent) }}
+            {% endif %}
+          </h4>
+          {% if property.auction_status == "Rent" %}
+          <span>/month</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if property.description %}
+      <div class="property-description">
+        <h2 class="description-title">Description</h2>
+        <p class="description-text">{{ property.description }}</p>
+      </div>
+      {% endif %}
+
+      {% if property.property_amenities %}
+      <div class="property-amenities">
+        <h2 class="description-title">Amenities</h2>
+        <div class="amenities-grid">
+          {% for amenity in property.property_amenities %}
+          <div class="amenity-item">
+            <i class="fas fa-check"></i>
+            <span>{{ amenity.name }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="contact-card">
+    <div class="landlord-info">
+      <div class="landlord-details">
+        <h2>Property Manager</h2>
+        <p>{{ property.user_properties }}</p>
+      </div>
+      <div class="contact-methods">
+        <button class="btn btn-outline" id="show-subscribe-modal">
+          <i class="fas fa-phone"></i> Contact Property Manager
+        </button>
+        <a href="{{ url_for('client.add_to_favourites', property_id=property.alias) }}">
+          <button class="btn favourite-btn" id="show-subscribe-modal">
+            <i class="fas fa-heart"></i> Add to favourites
+          </button>
+        </a>
+        <!-- <button class="btn book-btn" id="show-visit-modal">
+          <i class="fas fa-calendar-days"></i> Book Site Visit
+        </button> -->
+      </div>
+    </div>
+    <div class="rating-summary">
+      <div class="average-rating">
+        <div id="rating-score">
+          <h2 class="rating-score">{{ average_rating }}</h2>
+          <p>/5.0</p>
+        </div>
+      </div>
+      <div class="rating-count">Based on {{ ratings|count }} review{% if ratings|count != 1 %}s{% endif %}</div>
+      <button class="btn btn-outline" id="show-rating-modal">
+        <i class="fas fa-star"></i>
+        Rate Property Manager
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Subscribe Modal -->
+<div class="modal-overlay" id="subscribe-modal">
+  <div class="modal">
+    <div class="modal-icon">
+      <i class="fas fa-lock"></i>
+    </div>
+    <h2 class="modal-title">Subscribe to View Contact Details</h2>
+    <p class="modal-text">You need to subscribe to view the contact details of the property owner. This is a
+      one-time payment of $20.</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-secondary" id="close-subscribe-modal">Cancel</button>
+      <button class="modal-btn modal-btn-primary" id="process-payment">Subscribe</button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Processing Modal -->
+<div class="modal-overlay" id="payment-modal">
+  <div class="modal">
+    <div class="loader"></div>
+    <h2 class="modal-title">Processing Payment</h2>
+    <p class="modal-text">Please wait while we process your payment. This may take a few moments.</p>
+  </div>
+</div>
+
+<!-- Payment Success Modal -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal">
+    <div class="modal-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <h2 class="modal-title">Payment Completed</h2>
+    <p class="modal-text">Your subscription was successful! You can now view the contact details of the property
+      owner.</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-primary" id="view-contact-details">View Contact Details</button>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <h2 class="modal-title">Select Date for Site Visit</h2>
+    <form id="" action="{{ url_for('client.create_booking', property_id=property.alias) }}" , method="post">
+      <div class="input">
+        <label for="date">Select Date</label>
+        <input type="date" name="date" id="">
+      </div>
+      <div class="input">
+        <label for="time">Select Time</label>
+        <input type="time" name="time" id="">
+      </div>
+    </form>
+    <div class="modal-actions">
+      <button form="" class="modal-btn modal-btn-primary" id="view-contact-details">Book Site Visit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rating Modal -->
+<div class="modal-overlay" id="rating-modal">
+  <div class="modal">
+    <h2 class="modal-title">Select Rating</h2>
+    <form id="ratingForm" action="{{ url_for('client.rating', user_id=property.owner_id) }}" method="post">
+      <div class="input">
+        <label for="rating"></label>
+        <select required name="rating" id="rating">
+          <option value="">Select rating</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+    </form>
+    <div class="modal-actions">
+      <button form="ratingForm" class="modal-btn modal-btn-primary" id="view-contact-details">Submit
+        Rating</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contact Details Modal -->
+<div class="modal-overlay" id="contact-modal">
+  <div class="modal">
+    <div class="modal-icon">
+      <i class="fas fa-user"></i>
+    </div>
+    <h2 class="modal-title">Property Owner Contact Details</h2>
+    <div class="contact-details">
+      <div class="contact-item">
+        <div class="contact-icon">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="contact-info">
+          <div class="contact-label">Name</div>
+          <div class="contact-value">{{ property.user_properties.first_name }}
+            {{ property.user_properties.last_name }}
+          </div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">
+          <i class="fas fa-phone"></i>
+        </div>
+        <div class="contact-info">
+          <div class="contact-label">Phone Number</div>
+          <div class="contact-value">0{{ property.user_properties.phone }}</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="contact-info">
+          <div class="contact-label">Email Address</div>
+          <div class="contact-value">{{ property.user_properties.email }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top: 24px;">
+      <button class="modal-btn modal-btn-primary" id="close-contact-modal">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script defer src="{{ url_for('static', filename='js/property-detail.js') }}"></script>
+<!-- <script defer src="{{ url_for('static', filename='js/currency.js') }}"></script> -->
+{% endblock %}

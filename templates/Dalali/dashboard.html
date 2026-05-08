@@ -1,0 +1,154 @@
+{% extends "Dalali/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Dalali/dashboard.css') }}">
+{% endblock %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block nav %}
+<a href="{{ url_for('dalali.dashboard') }}" class="menu-item active">
+  <i class="fas fa-home"></i>
+  <span>Dashboard</span>
+</a>
+<!-- <a href="{{ url_for('crm.leads') }}" class="menu-item">
+  <i class="fas fa-person"></i>
+  <span>Leads</span>
+</a>
+<a href="#" class="menu-item">
+  <i class="fas fa-calendar-days"></i>
+  <span>Site Visits</span>
+</a> -->
+{% endblock %}
+
+{% block body %}
+<div class="content">
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <h2>Welcome back, {{ current_user.first_name }} {{ current_user.last_name }}!</h2>
+      <p>Here's what's happening with your properties today.</p>
+    </div>
+    <div class="welcome-action">
+      <a href="{{ url_for('dalali.upload_property') }}" class="btn">List a New Property</a>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon properties">
+        <i class="fas fa-building"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ properties|count }}</h3>
+        <p>Total Properties</p>
+      </div>
+    </div>
+
+    <!-- <div class="stat-card">
+      <div class="stat-icon tenants">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <h3>28</h3>
+        <p>Active Tenants</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon income">
+        <i class="fas fa-dollar-sign"></i>
+      </div>
+      <div class="stat-info">
+        <h3>$24,500</h3>
+        <p>Monthly Income</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon vacant">
+        <i class="fas fa-home"></i>
+      </div>
+      <div class="stat-info">
+        <h3>4</h3>
+        <p>Vacant Units</p>
+      </div>
+    </div> -->
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- Properties Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Recent Properties</h3>
+      </div>
+
+      <ul class="property-list">
+        {% for property in properties|sort(attribute="id", reverse=True) %}
+        <li class="property-item">
+          <div class="property-image">
+            {% if property.property_images %}
+            {% for image in property.property_images if image.image_type == "png" or image.image_type == "jpg" or image.image_type == "jpeg" %}
+            {% if loop.first %}
+            <img class="property-img" src="https://dalali-pms.s3.eu-north-1.amazonaws.com/{{ image.image_name }}"
+              alt="Luxury Apartment">
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+          </div>
+          <div class="property-info">
+            <h4>{{ property.name }}</h4>
+            <p>{{ property.property_location }}</p>
+          </div>
+          <span class="property-status status-occupied">
+            <a class="property-link" href="{{ url_for('dalali.property_details', property_id=property.alias) }}">
+              View Property
+            </a>
+          </span>
+          <span class="property-status status-removed">
+            <a class="property-link" href="{{ url_for('dalali.remove_property', property_id=property.alias) }}">
+              Remove Property
+            </a>
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="rating-card">
+      <h2>Your Rating</h2>
+      <div class="card-box">
+        <div class="card-box-header">
+          <h1>{{ average_rating }}</h1>
+          <p class="rating">/5.0</p>
+        </div>
+        <p>Based on {{ ratings|count }} review{% if ratings|count != 1 %}s{% endif %}</p>
+      </div>
+    </div>
+
+    <!-- Recent Activity Card -->
+    <!-- <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Recent Activity</h3>
+      </div>
+
+      <ul class="activity-list">
+        <li class="activity-item">
+          <div class="activity-icon payment">
+            <i class="fas fa-house"></i>
+          </div>
+          <div class="activity-content">
+            <h4>New Property Added</h4>
+            <p>You have added a new property</p>
+          </div>
+          <div class="activity-time">2h ago</div>
+        </li>
+      </ul>
+    </div> -->
+  </div>
+
+</div>
+{% endblock %}

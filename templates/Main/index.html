@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Main/style.css') }}">
+{% endblock %}
+
+{% block title %}
+Home
+{% endblock %}
+
+<!-- Hero Section -->
+{% block body %}
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="tagline">Find Your Dream Home</div>
+      <h1>Discover the Perfect Property for Your Lifestyle</h1>
+      <p>Sympatico offers the best selection of properties and apartments for rent and sale. Our innovative
+        platform connects you with trusted agents to find your perfect match.</p>
+
+      <div class="cta-buttons">
+        <a href="{{ url_for('client.properties') }}" class="btn">Explore Properties</a>
+        <a href="{{ url_for('auth.dalali_signup') }}" class="btn btn-secondary">Become An Agent</a>
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <img
+        src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80"
+        alt="Luxury modern home with spacious interior">
+    </div>
+  </div>
+</section>
+<section class="user-types-section">
+  <!-- Sticky Navigation -->
+  <div class="user-nav">
+    <h2 class="user-nav-title">System Users</h2>
+    <div class="user-nav-items">
+      <div class="user-nav-item active" data-target="dalali">
+        <i class="fas fa-user-tie"></i>
+        Agents
+      </div>
+      <div class="user-nav-item" data-target="clients">
+        <i class="fas fa-users"></i>
+        Clients
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="user-content">
+    <!-- Dalali Section -->
+    <section id="dalali" class="user-section">
+      <h2>Agents</h2>
+      <p>Join our network of professional real estate agents and list your properties to reach thousands of potential
+        clients. Our platform provides all the tools you need to succeed in the competitive real estate market.</p>
+
+      <div class="user-features">
+        <div class="feature-card">
+          <h3><i class="fas fa-home"></i> List Properties</h3>
+          <p>Showcase your properties with high-quality photos, virtual tours, and detailed descriptions to attract
+            serious buyers and renters.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fas fa-chart-line"></i> Performance Analytics</h3>
+          <p>Track your listings' performance with detailed analytics and insights to optimize your sales strategy.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fas fa-comments"></i> Client Management</h3>
+          <p>Manage all your client communications in one place with our integrated messaging system.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fas fa-badge-check"></i> Verified Profile</h3>
+          <p>Build trust with potential clients through our verified agent program and rating system.</p>
+        </div>
+      </div>
+
+      <div class="user-cta">
+        <a href="{{ url_for('auth.dalali_signup') }}" class="btn">Become an Agent</a>
+      </div>
+    </section>
+
+    <!-- Clients Section -->
+    <section id="clients" class="user-section">
+      <h2>Clients</h2>
+      <p>Find your perfect home from our curated collection of properties. Whether you're looking to rent or buy, our
+        platform makes it easy to discover properties that match your criteria and connect with trusted agents.</p>
+
+      <div class="user-features">
+        <div class="feature-card">
+          <h3><i class="fas fa-search"></i> Advanced Search</h3>
+          <p>Filter properties by location, price, size, amenities, and more to find exactly what you're looking for.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fas fa-heart"></i> Save Favorites</h3>
+          <p>Create a collection of your favorite properties and get notifications about price changes and availability.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fas fa-calendar-alt"></i> Schedule Tours</h3>
+          <p>Easily schedule property viewings at your convenience with our integrated booking system.</p>
+        </div>
+        <div class="feature-card">
+          <h3><i class="fas fa-shield-alt"></i> Secure Process</h3>
+          <p>Enjoy peace of mind with our verified listings and secure communication channels with agents.</p>
+        </div>
+      </div>
+
+      <div class="user-cta">
+        <a href="{{ url_for('client.properties') }}" class="btn btn-secondary">Browse Properties</a>
+      </div>
+    </section>
+  </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script src="../../static/js/index.js"></script>
+{% endblock %}

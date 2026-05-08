@@ -1,0 +1,44 @@
+.footer,
+header {
+  display: none;
+}
+
+.container {
+  min-height: 100svh;
+  padding: 4rem;
+  display: grid;
+  place-items: center;
+}
+
+.error-box {
+  display: grid;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.container div {
+  max-width: max-content;
+  margin-inline: auto;
+}
+
+.error-title h1 {
+  color: var(--dark-blue);
+}
+
+.error-img i {
+  font-size: 4rem;
+}
+
+.error-info p {
+  color: var(--black);
+  max-width: 60%;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.error-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}

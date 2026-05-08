@@ -1,0 +1,90 @@
+{% extends "Dalali/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Dalali/upload-property.css') }}">
+{% endblock %}
+
+{% block title %}
+Upload Property
+{% endblock %}
+
+{% block nav %}
+<a href="{{ url_for('dalali.dashboard') }}" class="menu-item">
+  <i class="fas fa-arrow-left"></i>
+  <span>Back</span>
+</a>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <form method="post">
+    {{ form.csrf_token }}
+    <div class="form-header">
+      <h2 class=" form-title">Property Details</h2>
+      <p class="form-description">Enter the basic information about your property</p>
+    </div>
+    <div class="form-container">
+      <div class="form-group extend">
+        {{ form.name.label}}
+        {{ form.name(placeholder="Enter Property Name", class="name") }}
+        {% for error in form.name.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="form-group extend">
+        {{ form.description.label}}
+        {{ form.description(placeholder="Enter full description of the property") }}
+        {% for error in form.description.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.property_type_id.label}}
+        {{ form.property_type_id( class="name") }}
+        {% for error in form.property_type_id.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.property_size.label}}
+        {{ form.property_size( class="name", placeholder="Enter land size in SQM") }}
+        {% for error in form.property_size.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="form-group extend">
+        {{ form.auction_status.label}}
+        {{ form.auction_status( class="name") }}
+        {% for error in form.auction_status.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.currency.label }}
+        {{ form.currency(class="name") }}
+        {% for error in form.currency.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.rent.label}}
+        {{ form.rent(placeholder="Enter rent/sale amount in KSH/USD", class="name") }}
+        {% for error in form.rent.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="form-navigation">
+      <button type="submit" class="btn btn-next">
+        Next
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="../../static/js/auth.js"></script>
+{% endblock %}

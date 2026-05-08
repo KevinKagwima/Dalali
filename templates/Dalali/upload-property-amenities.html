@@ -1,0 +1,63 @@
+{% extends "Dalali/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Dalali/upload-property.css') }}">
+{% endblock %}
+
+{% block title %}
+Upload Property Amenities | {{ upload_property.name }}
+{% endblock %}
+
+{% block nav %}
+<a href="{{ url_for('dalali.dashboard') }}" class="menu-item active">
+  <i class="fas fa-arrow-left"></i>
+  <span>Dashboard</span>
+</a>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <form method="post">
+    {{ form.csrf_token }}
+    <div class="form-header">
+      <h2 class="form-title">Property Amenities</h2>
+      <p class="form-description">Enter all amenities available for your property</p>
+    </div>
+    {% if upload_property.property_amenities %}
+    <div class="amenities-grid">
+      {% for amenity in upload_property.property_amenities %}
+      <div class="amenity-item">
+        <h4>{{ amenity }}</h4>
+        <a href="{{ url_for('dalali.remove_amenity', amenity_id=amenity.unique_id) }}">
+          <i class="fas fa-x"></i>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="form-container amenity-form-container">
+      <div class="form-group extend">
+        {{ form.name.label}}
+        {{ form.name(placeholder="Enter Amenity Eg. Swimming Pool, Gym, Wifi, Lift", class="name") }}
+        {% for error in form.name.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <button class="btn btn-next" type="submit">Add</button>
+    </div>
+  </form>
+  <div class="form-navigation">
+    <a href="{{ url_for('dalali.upload_property_images', property_id=upload_property.alias) }}">
+      <button type="button" class="btn btn-next">
+        Next
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}

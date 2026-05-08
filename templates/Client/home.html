@@ -1,0 +1,175 @@
+{% extends "Client/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Client/home.css') }}">
+{% endblock %}
+
+{% block title %}
+Properties
+{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+  <h1 class="hero-title">Find Your Perfect Home</h1>
+  <p class="hero-subtitle">Discover the best properties in your area</p>
+  <div class="search-box">
+    <form action="{{ url_for('client.search') }}" method="post" class="search-form">
+      <div class="input">
+        <label for="property_type">Property Type</label>
+        <select name="property_type" id="property_type">
+          <option value="">---</option>
+          <option value="1 Bedroom">1 Bedroom</option>
+          <option value="2 Bedroom">2 Bedroom</option>
+          <option value="3 Bedroom">3 Bedroom</option>
+          <option value="4 Bedroom">4 Bedroom</option>
+          <option value="5 Bedroom">5 Bedroom</option>
+          <option value="Bedsitter">Bedsitter</option>
+          <option value="Studio">Studio</option>
+          <option value="Bare Land">Bare Land</option>
+        </select>
+      </div>
+      <div class="input">
+        <label for="auction">Sale/Rent</label>
+        <select name="auction_status" id="auction">
+          <option value="">---</option>
+          <option value="Sale">Sale</option>
+          <option value="Rent">Rent</option>
+        </select>
+      </div>
+      <div class="input">
+        <label for="location">Location</label>
+        <input type="text" placeholder="Enter location" name="location" id="location">
+      </div>
+      <button class="search-btn">Search</button>
+    </form>
+  </div>
+</section>
+<section class="properteis-section">
+  <div class="title-box">
+    <h2 class="section-title">Available Properties</h2>
+    <!-- <div class="currency-converter">
+      <div class="converter-box">
+        <select id="currencySelector" class="currency-select">
+          <option value="KSH">Tanzanian Shilling (KSH)</option>
+          <option value="USD">US Dollar (USD)</option>
+        </select>
+      </div>
+    </div> -->
+    {% if search_query %}
+    <p>Found <b>{{ results_count }}</b> results</p>
+    {% endif %}
+  </div>
+  <div class="properties-grid">
+    {% for property in properties|sort(attribute="id", reverse=True) %}
+    <div class="property-card">
+      <div class="property-image">
+        {% if property.property_images %}
+        {% for image in property.property_images if image.image_type == "png" or image.image_type == "jpg" or image.image_type == "jpeg" %}
+        {% if loop.first %}
+        <img class="property-img" src="https://dalali-pms.s3.eu-north-1.amazonaws.com/{{ image.image_name }}"
+          alt="Luxury Apartment">
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <img class="no-image" src="../../static/Images/no-photo.png" alt="">
+        {% endif %}
+        <div class="property-status {{ property.auction_status }}">
+          {{ property.auction_status }}
+        </div>
+      </div>
+      <div class="property-content">
+        <div class="property-content-header">
+          <div class="header-box">
+            <h2 id="prop-name" title="{{ property.name }}">{{ property.name|truncate(30) }}</h2>
+            {% if property.property_location %}
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i>
+              {% for location in property_locations if location.property_id == property.id %}
+              <span>{{ location.region }}, {{ location.district }}, {{ location.town }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          <p class="property-title">
+            {{ property.property_types.name }}
+            {% if property.property_types.name == "Bare Land" %}
+            <span id="prop-size">{{ "{:,}".format(property.property_size) }} SQM</span>
+            {% endif %}
+          </p>
+        </div>
+        {% if property.description %}
+        <div class="property-description">
+          <p title="{{ property.description }}">{{ property.description|truncate(80) }}</p>
+        </div>
+        {% endif %}
+        <div class="price-box">
+          <div id="mainPrice" data-currency="{{ property.currency }}" data-Ksh="{{ property.rent }}"
+            class="property-price">
+            {% if property.currency == "KSH" %}
+            Ksh
+            {% elif property.currency == "USD" %}
+            $
+            {% else %}
+            KSH
+            {% endif %}
+            {{ "{:,}".format(property.rent) }}
+          </div>
+          {% if property.auction_status == "Rent" %}
+          <span>/month</span>
+          {% endif %}
+        </div>
+        <div class="property-actions">
+          <a href="{{ url_for('client.property_details', property_id=property.alias) }}">
+            <button class="btn btn-outline">View Property</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="pagination-box">
+    <div class="pagination">
+      {% if prev_url %}
+      <div class="prev-url pagination-url">
+        <i class="fa fa-angle-left"></i>
+        <a href="{{ prev_url }}">Previous Page</a>
+      </div>
+      {% endif %}
+      <div class="page-number-box">
+        {% if prev_page_number %}
+        <a href="{{ url_for('client.properties', page=prev_page_number) }}" class="page-number">
+          {{ prev_page_number }}
+        </a>
+        {% endif %}
+        {% if not next_page_number and not prev_page_number %}
+        {% elif not next_page_number %}
+        <a id="current" href="{{ url_for('client.properties', page=prev_page_number + 1) }}" class="page-number">
+          {{ prev_page_number + 1 }}
+        </a>
+        {% else %}
+        <a id="current" href="{{ url_for('client.properties', page=next_page_number-1) }}" class="page-number">
+          {{ next_page_number - 1 }}
+        </a>
+        {% endif %}
+
+        {% if next_page_number %}
+        <a href="{{ url_for('client.properties', page=next_page_number) }}" class="page-number">
+          {{ next_page_number }}
+        </a>
+        {% endif %}
+      </div>
+      {% if next_url %}
+      <div class="next-url pagination-url">
+        <a href="{{ next_url }}">Next Page</a>
+        <i class="fa fa-angle-right"></i>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<!-- <script defer src="{{ url_for('static', filename='js/currency-2.js') }}"></script> -->
+{% endblock %}

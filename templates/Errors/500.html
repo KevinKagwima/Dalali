@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Error/error.css') }}">
+{% endblock %}
+
+{% block title %}
+{{ message }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="error-box">
+    <div class="error-title">
+      <h1>{{ message }}</h1>
+    </div>
+    <div class="error-img">
+      <i class="fas fa-triangle-exclamation"></i>
+    </div>
+    <div class="error-info">
+      <p>{{ error }}</p>
+    </div>
+    <div class="error-actions">
+      <a href="{{ url_for('main.index') }}">
+        <button>Back Home</button>
+      </a>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

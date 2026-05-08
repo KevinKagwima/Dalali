@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+      Sympatico | {% block title %}{% endblock %}
+    </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Client/base.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='Images/favicon_io/favicon-32x32.png') }}"
+      type="image/x-icon">
+    {% endblock %}
+  </head>
+
+  <body>
+    <header class="header">
+      <a href="{{ url_for('client.properties') }}" class="logo">
+        <img id="logo" src="{{ url_for('static', filename='Images/Logo/full-logo.png') }}" alt="">
+        <!-- <h4>Sympatico</h4> -->
+      </a>
+
+      <nav class="nav-menu">
+        <!-- <a href="{{ url_for('main.index') }}" class="nav-link">About Us</a> -->
+        <a href="{{ url_for('client.properties') }}" class="nav-link">Properties</a>
+        <!-- <a href="{{ url_for('client.favourites') }}" class="nav-link">Favourites</a> -->
+        <!-- <a href="#" class="nav-link">Contact</a> -->
+      </nav>
+
+      <div class="header-actions">
+        <a href="{{ url_for('auth.dalali_signup') }}">
+          <button class="btn btn-dalali">Become An Agent</button>
+        </a>
+        {% if current_user.is_authenticated %}
+        <p><b>Welcome,</b> {{ current_user.first_name }} {{ current_user.last_name }}</p>
+        {% else %}
+        <a href="{{ url_for('auth.client_signup') }}">
+          <button class="btn btn-primary">Sign Up</button>
+        </a>
+        {% endif %}
+      </div>
+
+      <div class="burger">
+        <div class="line1"></div>
+        <div class="line2"></div>
+        <div class="line3"></div>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+          <div class="flash-content">
+            <p>{{ message }}</p>
+          </div>
+          <button class="flash-close" aria-label="Close message">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path
+                d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+            </svg>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+    </header>
+    <div class="mobile-navigation">
+      <div class="header-box">
+        <i class="fas fa-x"></i>
+      </div>
+      <div class="user-info">
+        {% if current_user.is_authenticated %}
+        <p><b>Welcome,</b> {{ current_user.first_name }} {{ current_user.last_name }}</p>
+        {% else %}
+        <a href="{{ url_for('auth.client_signup') }}">
+          <button class="btn btn-primary">Sign Up</button>
+        </a>
+        {% endif %}
+        <a href="{{ url_for('auth.dalali_signup') }}">
+          <button class="btn btn-dalali">Become A Dalali</button>
+        </a>
+      </div>
+      <div class="navigation-info">
+        <a href="{{ url_for('client.properties') }}">Home</a>
+        <a href="{{ url_for('main.index') }}">About Us</a>
+        <a href="{{ url_for('client.favourites') }}">Favourites</a>
+        {% if current_user.is_authenticated %}
+        <a id="logout" href="{{ url_for('auth.logout') }}">Logout</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="content-wrapper">
+      <!-- <div class="top-header">
+        <div id="google_translate_element"></div>
+      </div> -->
+      {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <h3>Sympatico</h3>
+          <p>Find your perfect rental property with ease. We connect tenants with the best properties across Kenya.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('client.properties') }}">Browse Properties</a></li>
+            <li><a href="{{ url_for('dalali.dashboard') }}">List Your Property</a></li>
+            <!-- <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact Us</a></li> -->
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3>Resources</h3>
+          <ul class="footer-links">
+            <li><a href="#">Renting Guide</a></li>
+            <li><a href="#">Neighborhoods</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3>Connect With Us</h3>
+          <ul class="footer-links">
+            <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+            <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+            <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+            <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Sympatico. All rights reserved.</p>
+      </div>
+    </footer>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          { pageLanguage: 'en' },
+          'google_translate_element'
+        )
+      }
+    </script>
+    <script type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="../../static/js/client_base.js"></script>
+    <script src="../../static/js/base.js"></script>
+    {% block script %}{% endblock %}
+  </body>
+
+</html>

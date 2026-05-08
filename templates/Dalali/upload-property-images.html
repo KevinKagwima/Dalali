@@ -1,0 +1,70 @@
+{% extends "Dalali/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Dalali/upload-property.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Dalali/upload-images.css') }}">
+{% endblock %}
+
+{% block title %}
+Upload Property Images | {{ upload_property.name }}
+{% endblock %}
+
+{% block nav %}
+<a href="{{ url_for('dalali.upload_property_amenities', property_id=upload_property.alias) }}" class="menu-item active">
+  <i class="fas fa-arrow-left"></i>
+  <span>Back</span>
+</a>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <form action="{{ url_for('dalali.upload_property_images', property_id=upload_property.alias) }}" method="post"
+    enctype="multipart/form-data">
+    <div class="form-header">
+      <h2 class=" form-title">Property Images</h2>
+      <p class="form-description">Upload Images of your property</p>
+    </div>
+    <div class="form-container">
+      <div class="image-upload-container" id="upload-area">
+        <div class="upload-icon">
+          <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <div class="upload-text">
+          <p>Drag & drop images here or click to browse</p>
+          <p>This could take a while.</p>
+          <p>Large images will take longer to upload. Reduce size of images to reduce upload time
+          </p>
+          <p>Do not refresh this page.</p>
+        </div>
+        <div class="upload-button">Select Images</div>
+        <input type="file" class="name" name="images" id="image-upload" multiple
+          accept="image/png, Image/jpeg, Video/mp4" style="display: none;">
+      </div>
+      <div class="image-preview" id="image-preview">
+      </div>
+    </div>
+    <div class="form-navigation">
+      <button type="submit" class="btn btn-next">
+        Complete
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </form>
+
+  <div class="modal-overlay" id="rating-modal">
+    <div class="modal">
+      <h2 class="modal-title">Uploading Property Media</h2>
+      <p>This could take a while. Large media will take longer to upload. Reduce size of images/videos to reduce upload
+        time.
+      </p>
+      <p>Do not refresh this page.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

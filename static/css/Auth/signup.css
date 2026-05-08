@@ -1,0 +1,94 @@
+.footer,
+.links,
+.user,
+.login {
+  display: none;
+}
+
+.form {
+  padding: 2rem;
+  display: grid;
+  place-items: center;
+  gap: 2rem;
+  position: relative;
+}
+
+.form > h4 {
+  color: var(--black);
+  font-size: 4ch;
+  text-align: center;
+}
+
+.box {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.box p {
+  color: var(--black);
+}
+
+.box a {
+  color: var(--blue);
+  text-align: center;
+}
+
+form {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 40%;
+  gap: 1rem;
+  background-color: var(--white);
+  border-radius: var(--radius-s);
+  box-shadow: var(--box-shadow);
+}
+
+label {
+  color: var(--other-dark-blue);
+}
+
+input {
+  background-color: var(--whitesmoke);
+  padding-block: 0.8rem;
+  color: var(--dark);
+  font-size: 1.2rem;
+}
+
+input::placeholder {
+  font-size: 1rem;
+}
+
+.extend {
+  grid-column: 1/-1;
+}
+
+button {
+  padding-block: 0.6rem;
+}
+
+@media screen and (max-width: 1000px) {
+  form {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .form {
+    padding-inline: 1rem;
+  }
+
+  #home-btn {
+    left: 1rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  form {
+    grid-template-columns: 1fr;
+  }
+
+  .form > h4 {
+    font-size: 3ch;
+  }
+}

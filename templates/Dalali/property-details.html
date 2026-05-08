@@ -1,0 +1,142 @@
+{% extends "Dalali/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Dalali/property-details.css') }}">
+{% endblock %}
+
+{% block title %}
+{{ property.name }}
+{% endblock %}
+
+{% block nav %}
+<a href="{{ url_for('dalali.dashboard') }}" class="menu-item active">
+  <i class="fas fa-chevron-left"></i>
+  <span>Back</span>
+</a>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="details-box">
+    <div class="details-title-box">
+      <h1>Property Details</h1>
+      <button form="propDetailsForm" class="btn">Update</button>
+    </div>
+    <div class="details-content">
+      <form id="propDetailsForm" action="{{ url_for('dalali.update_property_details', property_id=property.alias) }}"
+        method="post">
+        {{ propDetailsForm.csrf_token() }}
+        <div class="input extend">
+          {{ propDetailsForm.name.label }}
+          {{ propDetailsForm.name }}
+        </div>
+        <div class="input extend">
+          {{ propDetailsForm.description.label }}
+          {{ propDetailsForm.description }}
+        </div>
+        <div class="input">
+          {{ propDetailsForm.property_type_id.label }}
+          {{ propDetailsForm.property_type_id }}
+        </div>
+        <div class="input">
+          {{ propDetailsForm.property_size.label }}
+          {{ propDetailsForm.property_size }}
+        </div>
+        <div class="input extend">
+          {{ propDetailsForm.auction_status.label }}
+          {{ propDetailsForm.auction_status }}
+        </div>
+        <div class="input">
+          {{ propDetailsForm.currency.label }}
+          {{ propDetailsForm.currency }}
+        </div>
+        <div class="input">
+          {{ propDetailsForm.rent.label }}
+          {{ propDetailsForm.rent }}
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="details-box">
+    <div class="details-title-box">
+      <h1>Property Location</h1>
+      <button form="PropLocationForm" class="btn">Update</button>
+    </div>
+    <div class="details-content">
+      <form id="PropLocationForm" action="{{ url_for('dalali.update_property_location', property_id=property.alias) }}"
+        method="post">
+        {{ locationForm.csrf_token }}
+        <div class="input">
+          {{ locationForm.region.label }}
+          {{ locationForm.region }}
+        </div>
+        <div class="input">
+          {{ locationForm.district.label }}
+          {{ locationForm.district }}
+        </div>
+        <div class="input">
+          {{ locationForm.town.label }}
+          {{ locationForm.town }}
+        </div>
+        <div class="input">
+          {{ locationForm.house_no.label }}
+          {{ locationForm.house_no }}
+        </div>
+        <div class="input">
+          {{ locationForm.landmark.label }}
+          {{ locationForm.landmark }}
+        </div>
+        <div class="input">
+          {{ locationForm.street.label }}
+          {{ locationForm.street }}
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="details-box">
+    <div class="details-title-box">
+      <h1>Property Amenities</h1>
+      <!-- <a href="{{ url_for('dalali.upload_property_amenities', property_id=property.alias) }}">
+        <button class="btn">Add</button>
+      </a> -->
+    </div>
+    <div class="details-content">
+      <div class="amenities-box">
+        {% for amenity in property.property_amenities %}
+        <div class="amenity">
+          <p>{{ amenity.name }}</p>
+          <a href="{{ url_for('dalali.remove_amenity', amenity_id=amenity.unique_id) }}"><i class="fas fa-x"></i></a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="details-box">
+    <div class="details-title-box">
+      <h1>Property Images</h1>
+    </div>
+    <div class="details-content">
+      <div class="images-box">
+        {% for image in property.property_images %}
+        {% if image.image_type == "png" or image.image_type == "jpg" or image.image_type == "jpeg" %}
+        <div class="image">
+          <img src="https://dalali-pms.s3.eu-north-1.amazonaws.com/{{ image.image_name }}" alt="">
+          <a href="{{ url_for('dalali.remove_image', image_id=image.unique_id) }}">
+            <i class="fas fa-trash"></i>
+          </a>
+        </div>
+        {% else %}
+        <div class="image">
+          <video controls src="https://dalali-pms.s3.eu-north-1.amazonaws.com/{{ image.image_name }}"></video>
+          <a href="{{ url_for('dalali.remove_image', image_id=image.unique_id) }}">
+            <i class="fas fa-trash"></i>
+          </a>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

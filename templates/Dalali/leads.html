@@ -1,0 +1,115 @@
+{% extends "Dalali/base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Dalali/leads.css') }}">
+{% endblock %}
+
+{% block title %}
+Leads
+{% endblock %}
+
+{% block nav %}
+<a href="{{ url_for('dalali.dashboard') }}" class="menu-item">
+  <i class="fas fa-home"></i>
+  <span>Dashboard</span>
+</a>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="container-header">
+    <button class="btn" id="lead_btn">
+      <i class="fas fa-plus"></i>
+      New Lead
+    </button>
+  </div>
+  <div class="container-content">
+    <div class="content-header">
+      <h2>Available Leads</h2>
+    </div>
+    <div class="content-body">
+      {% for lead in leads|sort(attribute="id", reverse=True) %}
+      <div class="lead">
+        <div class="lead-header">
+          <h4>Lead ID - {{ lead.unique_id }}</h4>
+          {% if lead.is_open %}
+          <span class="lead-status open">Open</span>
+          {% else %}
+          <span class="lead-status closed">Closed</span>
+          {% endif %}
+        </div>
+        <div class="lead-body">
+          <div class="lead-user-box">
+            <div class="lead-user-header">
+              <h4>Client Details</h4>
+            </div>
+            <div class="lead-user-body">
+              <p>{{ lead.user_lead.first_name }} {{ lead.user_lead.last_name }}, 0{{ lead.user_lead.phone }}</p>
+              <p>{{ lead.user_lead.email }}</p>
+            </div>
+          </div>
+          <div class="lead-listing-box">
+            <h4>Property Listing</h4>
+            <p>{{ lead.property_leads.name|truncate(30) }}</p>
+            <p>{{ lead.property_leads.property_location }}</p>
+          </div>
+        </div>
+        <div class="lead-footer">
+          {% if lead.is_open %}
+          <a href="{{ url_for('crm.close_lead', lead_id=lead.unique_id) }}">
+            <button class="btn">Close Lead</button>
+          </a>
+          {% elif lead.is_closed %}
+          <p class="btn-closed">Closed</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="lead-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <i class="fas fa-x"></i>
+    </div>
+    <div class="modal-content">
+      <div class="content-header">
+        <h2>Add New Lead</h2>
+      </div>
+      <div class="content-body">
+        <form action="{{ url_for('crm.add_new_lead') }}" method="post">
+          {{ form.csrf_token }}
+          <div class="input">
+            {{ form.first_name.label}}
+            {{ form.first_name(placeholder="Enter Client's First Name", class="name") }}
+          </div>
+          <div class="input">
+            {{ form.last_name.label}}
+            {{ form.last_name(placeholder="Enter Client's Last Name", class="name") }}
+          </div>
+          <div class="input">
+            {{ form.email_address.label}}
+            {{ form.email_address(placeholder="Enter Client's Email Address", class="name") }}
+          </div>
+          <div class="input">
+            {{ form.phone_number.label}}
+            {{ form.phone_number(placeholder="Enter Client's Phone Number", class="name") }}
+          </div>
+          <div class="input extend">
+            {{ form.property_listing.label}}
+            {{ form.property_listing(class="name") }}
+          </div>
+          <button class="btn">Add Lead</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="../../static/js/leads.js"></script>
+{% endblock %}
