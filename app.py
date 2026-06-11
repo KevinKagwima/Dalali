@@ -1,4 +1,4 @@
-from flask import Flask, flash
+from flask import Flask, flash, abort
 from flask_login import LoginManager
 from Models.base_model import db
 from Models.users import Users
@@ -50,6 +50,7 @@ def load_user(user_id):
   try:
     return Users.query.filter_by(unique_id=user_id).first()
   except Exception as e:
+    abort(500)
     flash(f"Error loading user: {str(e)}", "danger")
 
 # return app
